@@ -5,13 +5,9 @@ require('dotenv').config();
 const app = express();
 const port = 3001;
 
-// Initialize OpenAI with project API key
+// Initialize OpenAI with API key from environment variable
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    baseURL: 'https://api.openai.com/v1',
-    defaultHeaders: {
-        'OpenAI-Beta': 'project-apis'
-    }
+    apiKey: process.env.OPENAI_API_KEY
 });
 
 // Enable CORS
