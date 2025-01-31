@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanta AI Hub - Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .hub-container {
+            display: flex;
+            height: 100vh;
+            background: #0A0F1C;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: 1px solid #FF3D71;
+            color: #FF3D71;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 100;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 61, 113, 0.1);
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.2);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #151B2B;
+            border-right: 1px solid rgba(255, 61, 113, 0.1);
+            padding: 20px;
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .new-chat-btn {
+            background: linear-gradient(135deg, #FF3D71 0%, #00D4FF 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .new-chat-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.2);
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #fff;
+            opacity: 0.8;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 61, 113, 0.1);
+            background: rgba(255, 61, 113, 0.05);
+        }
+
+        .chat-item:hover {
+            background: rgba(255, 61, 113, 0.1);
+            border-color: #FF3D71;
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.2);
+        }
+
+        .chat-item.active {
+            background: rgba(255, 61, 113, 0.15);
+            border-color: #FF3D71;
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.3);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .user-message {
+            background: rgba(255, 61, 113, 0.05);
+            border: 1px solid rgba(255, 61, 113, 0.2);
+            margin-right: auto;
+        }
+
+        .ai-message {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            margin-left: auto;
+        }
+
+        .message-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #A0AEC0;
+        }
+
+        .message-content {
+            color: #FFFFFF;
+            line-height: 1.6;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: #151B2B;
+            border-top: 1px solid rgba(255, 61, 113, 0.1);
+        }
+
+        .input-box {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 16px;
+            padding-right: 50px;
+            background: #0A0F1C;
+            border: 1px solid rgba(255, 61, 113, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            resize: none;
+            min-height: 60px;
+            max-height: 200px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #FF3D71;
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.2);
+        }
+
+        .send-btn {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            background: linear-gradient(135deg, #FF3D71 0%, #00D4FF 100%);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.2);
+        }
+
+        .wallet-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #FF3D71 0%, #00D4FF 100%);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+            z-index: 100;
+            min-width: 140px;
+            justify-content: center;
+            height: 36px;
+        }
+
+        .wallet-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .wallet-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.2);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            margin-left: auto;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #00D4FF;
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite;
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Wallet Menu */
+        .wallet-menu {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: #151B2B;
+            border: 1px solid rgba(255, 61, 113, 0.2);
+            border-radius: 6px;
+            padding: 6px;
+            display: none;
+            z-index: 100;
+            width: 140px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .wallet-menu.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .disconnect-btn {
+            background: transparent;
+            border: 1px solid #FF3D71;
+            color: #FF3D71;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .disconnect-btn:hover {
+            background: rgba(255, 61, 113, 0.1);
+            box-shadow: 0 0 20px rgba(255, 61, 113, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="hub-container">
+        <a href="http://localhost:3001" class="back-button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Home
+        </a>
+
+        <button class="wallet-btn" id="connectWallet">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7zm-4 0a2 2 0 0 0-2-2H3m18 2h-6"/>
+            </svg>
+            Connect Wallet
+        </button>
+
+        <div class="wallet-menu" id="walletMenu">
+            <button class="disconnect-btn" id="disconnectWallet">Disconnect</button>
+        </div>
+
+        <aside class="sidebar">
+            <button class="new-chat-btn" id="newChatBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                New Analysis
+            </button>
+            <div class="chat-history" id="chatHistory">
+                <!-- Chat history items will be dynamically added here -->
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="chat-container" id="chatContainer">
+                <!-- Messages will be dynamically added here -->
+            </div>
+
+            <div class="input-container">
+                <div class="input-box">
+                    <textarea 
+                        class="chat-input" 
+                        placeholder="Ask about market trends, price analysis, or predictions..."
+                        rows="1"
+                        id="messageInput"
+                    ></textarea>
+                    <button class="send-btn" id="sendButton">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="hub.js"></script>
+</body>
+</html>
