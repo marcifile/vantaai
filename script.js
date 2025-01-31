@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         // Redirect to hub with query
-        window.location.href = `hub.html?query=${encodeURIComponent(message)}`;
+        window.location.href = `/hub.html?query=${encodeURIComponent(message)}`;
     }
 
     analyzeBtn.addEventListener('click', handleAnalyze);

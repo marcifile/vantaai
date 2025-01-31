@@ -5,28 +5,58 @@ require('dotenv').config();
 const app = express();
 const port = 3001;
 
-// Initialize OpenAI
+// Initialize OpenAI with project API key
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: 'https://api.openai.com/v1',
+    defaultHeaders: {
+        'OpenAI-Beta': 'project-apis'
+    }
 });
-
-// Serve static files
-app.use(express.static(__dirname));
-app.use(express.json());
 
 // Enable CORS
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
+const cors = require('cors');
+app.use(cors());
+app.use(express.json());
 
 // Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/hub', (req, res) => {
+app.get('/hub.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'hub.html'));
+});
+
+app.get('/script.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'script.js'));
+});
+
+app.get('/hub.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'hub.js'));
+});
+
+app.get('/styles.css', (req, res) => {
+    res.sendFile(path.join(__dirname, 'styles.css'));
+});
+
+// Serve static files for assets
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Serve other static files
+app.get('/styles.css', (req, res) => {
+    res.sendFile(path.join(__dirname, 'styles.css'));
+});
+
+app.get('/script.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'script.js'));
+});
+
+app.get('/hub.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'hub.js'));
+});
+
+app.get('/hub.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'hub.html'));
 });
 
@@ -35,8 +65,9 @@ app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
     
     try {
+        console.log('Attempting API call with key:', process.env.OPENAI_API_KEY.substring(0, 10) + '...');
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-1106-preview",
+            model: "gpt-3.5-turbo",
             messages: [
                 {
                     role: "system",
@@ -61,10 +92,18 @@ app.post('/api/chat', async (req, res) => {
 
         res.json({ response: completion.choices[0].message.content });
     } catch (error) {
-        console.error('OpenAI API Error:', error);
+        console.error('OpenAI API Error:', {
+            message: error.message,
+            type: error.type,
+            code: error.code,
+            param: error.param,
+            stack: error.stack
+        });
         res.status(500).json({ 
             error: 'Error processing your request',
-            details: error.message 
+            details: error.message,
+            type: error.type,
+            code: error.code
         });
     }
 });
